@@ -1,15 +1,23 @@
 const fs = require('fs');
-const num = fs.readFileSync('input.txt').toString().split('');
+const str = fs.readFileSync('input.txt').toString();
 
 function solution() {
-  if (num[0] === '0') return 0;
-
-  const binary = num.reduce((acc, str, i) => {
-    const temp = Number(str).toString(2);
-    return i === 0 ? acc + temp : acc + temp.padStart(3, '0');
-  }, '');
-
-  return binary;
+  if (str === '0') return 0;
+  const answer = [];
+  const bin = new Map([
+    ['0', '000'],
+    ['1', '001'],
+    ['2', '010'],
+    ['3', '011'],
+    ['4', '100'],
+    ['5', '101'],
+    ['6', '110'],
+    ['7', '111'],
+  ]);
+  for (let i = 0; i < str.length; i++) {
+    answer.push(i !== 0 ? bin.get(str[i]) : parseInt(str[i], 8).toString(2));
+  }
+  return answer.join('');
 }
 
 console.log(solution());
@@ -25,8 +33,14 @@ console.log(solution());
   풀이2)
   8진수 -> 2진수 변환의 정의를 이용하기로 했다.
   8진수의 한 자리는 이진수 세 자리를 묶어서 계산한 결과이다.
-  예를 들어 325는 '011' + '010' + '101' = 011010101 로 바꿀 수 있다.
+  예를 들어 314는 '011' + '001' + '100' = '011001100' 이고, 앞에서 0을 제거해서 11001100이다.
 
-  각 자릿수를 2진수로 변화시킬 때 세자리수가 되지 않는다면 padStart()로 앞의 빈자리를 0으로 채워주자.
-  그리고 맨 앞자리가 0 혹은 00으로 시작하는 경우를 대비해 i==0인 경우에는 padStart를 하지 않고 문자열을 더하자
+  각 자릿수를 8 -> 10 -> 2의 과정을 거쳐 2진수로 만든다...는 방법도 있는데
+  전체가 아니라 각 자릿수라는 0~7까지의 숫자밖에 없으므로 매핑테이블을 만들자.
+  
+  결과의 앞자리에 0이 들어있는 것을 방지하기 위해
+  맨 첫자리에 한해 parseInt(str[i], 8).toString(2)를 이용해 2진수로 변환해주자.
+  둘째자리 변환 결과가 0으로 시작하는지 신경쓸 필요 없는 이유는,
+  첫째자리는 적어도 001 처럼 1이 중간에 막고 있는 것이 보장되기 때문이다.
+  000으로 시작하는 경우는 주어진 수가 0일 때밖에 없다.
 */
